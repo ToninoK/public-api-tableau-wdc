@@ -15,6 +15,9 @@ without providing credentials on each execution.
 
 Open http://0.0.0.0:8000/socialbakers_api_wdc.html
 
+Official [Tableau WDC Simulator](https://tableau.github.io/webdataconnector/Simulator) can be used for testing instead 
+of Tableau Desktop application.
+
 ## Deployment
 
 The deployment of Tableau WDC can be done on any HTTP server, making the contents of `src` directory publicly available.
