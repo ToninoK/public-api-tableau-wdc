@@ -14,4 +14,6 @@ The deployment of Tableau WDC can be done on any HTTP server, making the content
 To submit the connector to [Tableau WDC Community Portal](https://tableau.github.io/webdataconnector/community),
 the source code repository needs to be hosted on a public repository (github.com, gitlab.com, ...).
 
-The `.gitlab.ci.yml` is already included that configures and automatically deploys `master` to gitlab pages.
+The `.gitlab.ci.yml` is already included that configures and automatically deploys `master` to gitlab pages
+ - https://api-connectors.git.ccl/tableau-connector/socialbakers_api_wdc.html
+ - this cannot be used for testing in Tableau because the `.ccl` domain is hidden behind VPN
