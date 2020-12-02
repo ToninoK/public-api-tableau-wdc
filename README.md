@@ -7,6 +7,14 @@ Tableau Web Data Connectors are static web pages that use JS to connect to data-
 The Tableau WDC SDK provides a way to securely store the credentials and configuration so connectors can be reused
 without providing credentials on each execution.
 
+## Run
+
+`npm i -g light-server`
+
+`light-server -p 8000 -s src`
+
+Open http://0.0.0.0:8000/socialbakers_api_wdc.html
+
 ## Deployment
 
 The deployment of Tableau WDC can be done on any HTTP server, making the contents of `src` directory publicly available.

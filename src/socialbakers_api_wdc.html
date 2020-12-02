@@ -79,13 +79,23 @@
 
 <!-- LOGIN -->
 <form id="login">
-    <div class="mb-3">
-        <label for="token" class="form-label">Socialbakers API Token</label>
-        <input type="text" class="form-control" id="token">
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Socialbakers API Tableau Web Data Connector</h4>
+        <p>
+            Documentation available on
+            <a class="alert-link" href="https://api.socialbakers.com/#tableau-wdc" target="_blank">
+                https://api.socialbakers.com/#tableau-wdc
+            </a>
+        </p>
     </div>
-    <div class="mb-3">
+
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="token" placeholder=" ">
+        <label for="token" class="form-label">Socialbakers API Token</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="secret" placeholder=" ">
         <label for="secret" class="form-label">Socialbakers API Secret</label>
-        <input type="password" class="form-control" id="secret">
     </div>
     <button type="submit" class="btn btn-primary">
         <span id="loginSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -97,8 +107,7 @@
 <form id="profiles" style="display:none">
     <div class="row" style="margin-bottom: 10px">
         <div class="col-5">
-            <button type="button" class="btn btn-primary dropdown-toggle" id="data_source"
-                    data-toggle="dropdown">
+            <button type="button" class="btn btn-primary dropdown-toggle" id="data_source" data-toggle="dropdown">
                 Profile metrics
             </button>
             <ul class="dropdown-menu">
