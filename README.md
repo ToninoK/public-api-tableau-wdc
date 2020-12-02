@@ -27,4 +27,3 @@ the source code repository needs to be hosted on a public repository (github.com
 
 The `.gitlab.ci.yml` is already included that configures and automatically deploys `master` to gitlab pages
  - https://api-connectors.git.ccl/tableau-connector/socialbakers_api_wdc.html
- - this cannot be used for testing in Tableau because the `.ccl` domain is hidden behind VPN
