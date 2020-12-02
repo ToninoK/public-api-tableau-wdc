@@ -28,6 +28,7 @@ function processPost(post) {
 
         if (!fieldObj) {
             console.log(`Unknown field in the response: ${field}`)
+            continue
         }
 
         if (fieldObj.type) {
