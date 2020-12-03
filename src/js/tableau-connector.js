@@ -1,7 +1,7 @@
 const MAX_PROFILES = 25
 const MAX_METRICS = 25
 const MAX_DAYS = 90
-const MAX_POSTS_ARRAY_DEPTH = 5
+const MAX_POSTS_ARRAY_DEPTH = 10
 let tableauConnector = tableau.makeConnector()
 
 // Define the schema
