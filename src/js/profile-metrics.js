@@ -53,12 +53,12 @@ function renderProfileMetrics() {
             
             <div class="input-group mb-3">
                 <label class="input-group-text">Metrics</label>
-                    <select class="form-select" data-network="${network}" data-type="profile_metrics" 
+                <select class="form-select" data-network="${network}" data-type="profile_metrics" 
                         name="${network}-profile_metrics"></select>
             </div>
             <div class="input-group mb-3">
                 <label class="input-group-text">Dimensions</label>
-                    <select class="form-select" data-network="${network}" data-type="profile_dimensions" 
+                <select class="form-select" data-network="${network}" data-type="profile_dimensions" 
                         name="${network}-profile_dimensions"></select>
             </div>
         `))

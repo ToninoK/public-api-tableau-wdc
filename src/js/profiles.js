@@ -51,10 +51,10 @@ async function onProfilesSubmit(e) {
 $(function () {
     $profiles.submit(onProfilesSubmit)
 
-    $('[data-source-type]').click(function () {
+    $('[data-source-type]').click(function (e) {
+        e.preventDefault()
         SBKS.data_source = $(this).data('source-type')
         $('#data_source').text($(this).text())
-
         renderProfiles()
     })
 

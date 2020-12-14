@@ -4,6 +4,12 @@ const MAX_DAYS = 90
 const MAX_POSTS_ARRAY_DEPTH = 10
 let tableauConnector = tableau.makeConnector()
 
+// Initialize Tableau Web Data Connector
+tableauConnector.init = initCallback => {
+    tableau.authType = tableau.authTypeEnum.custom
+    initCallback()
+}
+
 // Define the schema
 tableauConnector.getSchema = schemaCallback => {
     let sbksData = JSON.parse(tableau.connectionData)
