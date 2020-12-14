@@ -1,6 +1,6 @@
-const MAX_PROFILES = 25
+const MAX_PROFILES = 100
 const MAX_METRICS = 25
-const MAX_DAYS = 90
+const MAX_DAYS = 360
 const MAX_POSTS_ARRAY_DEPTH = 10
 let tableauConnector = tableau.makeConnector()
 
