@@ -87,4 +87,16 @@ function showModal(title, body) {
 
 $(function () {
     $login.submit(onLoginSubmit)
+
+    $('#profiles .back').click(function () {
+        $('[id$=Spinner]').hide()
+        $('#profiles').hide()
+        $('#login').show()
+    })
+
+    $('#profileMetrics .back,#aggregatedPostMetrics .back, #posts .back').click(function () {
+        $('[id$=Spinner]').hide()
+        $('#profileMetrics, #aggregatedPostMetrics, #posts').hide()
+        $('#profiles').show()
+    })
 })
