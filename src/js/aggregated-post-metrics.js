@@ -49,7 +49,9 @@ function renderAggregatedPostMetrics() {
 
     // Fix the positioning bug with select2
     $('select').each(function () {
-        $(this).css({width: `${$(this).outerWidth() - 1}px`})
+        if($(this).outerWidth() > 10) {
+            $(this).css({width: `${$(this).outerWidth() - 1}px`})
+        }
     })
 
     $aggregatedPostMetricsSelect.select2({
