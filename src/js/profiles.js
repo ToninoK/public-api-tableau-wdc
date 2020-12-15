@@ -117,7 +117,7 @@ function filterProfiles(search) {
         for (const profile of profiles) {
             let show = !search || profile.name.match(new RegExp('(' + search + ')', 'gi'))
             hasProfiles = hasProfiles || show
-            $(`tr[data-profile-id=${profile.id}]`)
+            $(`tr[data-profile-id='${profile.id}']`)
                 .css('display', show ? '' : 'none')
                 .attr('data-hidden', show ? '0' : '1')
         }
