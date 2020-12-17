@@ -114,7 +114,7 @@ function renderPosts() {
                 return undefined
             }
 
-            let text = key.replaceAll('_', ' ').replace('.', ': ')
+            let text = key.replace(/_/g, ' ').replace('.', ': ')
             return {id: key, text: text.charAt(0).toUpperCase() + text.slice(1), selected: key === 'created_time'}
         })
 
@@ -148,7 +148,7 @@ function renderPosts() {
                 continue
             }
             if (config.networks.includes(network)) {
-                let text = field.replaceAll('_', ' ')
+                let text = field.replace(/_/g, ' ')
                 data.push({id: field, text: text.charAt(0).toUpperCase() + text.slice(1)})
             }
         }

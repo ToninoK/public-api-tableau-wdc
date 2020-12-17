@@ -82,7 +82,6 @@ function initProfileMetricsAndDimensions() {
 
         self.empty().select2({
             multiple: true,
-            placeholder: 'Metrics',
             data: Object.keys(PROFILE_METRICS[network]).map(v => {
                 if (!insights && v.indexOf('insights') === 0) {
                     return undefined
@@ -105,7 +104,6 @@ function initProfileMetricsAndDimensions() {
         let value = $dimensionsSelect.val()
         $dimensionsSelect.empty().select2({
             multiple: true,
-            placeholder: 'Dimensions',
             data: dimensions.map(v => {
                 return {id: v, text: v}
             })
