@@ -153,7 +153,7 @@ function renderPosts() {
             }
         }
 
-        $self.select2({multiple: true, data: data})
+        $self.select2({multiple: true, data: data}).val(['page','profile','channel']).change()
     })
 
     $('select.form-select[multiple]').select2()

@@ -11,9 +11,13 @@ function appendMetricColumn(name, cols) {
 }
 
 function appendDimensionColumn(name, cols, sbksData) {
-    if (name === 'profile' && sbksData.data_source === 'aggregated_post') {
-        cols.push({id: 'profile_id', dataType: tableau.dataTypeEnum.string})
-        cols.push({id: 'platform', dataType: tableau.dataTypeEnum.string})
+    if (name === 'profile') {
+        cols = appendColumn(cols, 'profile_id', tableau.dataTypeEnum.string)
+        cols = appendColumn(cols, 'profile', tableau.dataTypeEnum.string)
+
+        if (sbksData.data_source === 'aggregated_post') {
+            cols = appendColumn(cols, 'platform', tableau.dataTypeEnum.string)
+        }
         return cols
     }
 
@@ -35,15 +39,23 @@ function mergeHeader(a, b, match) {
             }
         }
     }
+
+    return a
 }
 
-function processMetricItem(data, item, depth, index, row, rows) {
+function processMetricItem(sbksData, data, item, depth, index, row, rows) {
     let header = data.header[depth]
 
     if (header.type !== 'metric') {
-        if (header.type === 'profile' && typeof header.rows[index] !== 'string') {
-            row['profile_id'] = header.rows[index].id
-            row['platform'] = header.rows[index].platform
+        if (header.type === 'profile') {
+            if (typeof header.rows[index] === 'string') {
+                row['profile_id'] = header.rows[index]
+            } else {
+                row['profile_id'] = header.rows[index].id
+                row['platform'] = header.rows[index].platform
+            }
+            let profile = sbksData.profiles[row.platform].find(p => p.id === row['profile_id'])
+            row['profile'] = profile ? profile.name : null
         } else {
             row[header.type.replace('.', '_')] = header.rows[index]
         }
@@ -59,7 +71,7 @@ function processMetricItem(data, item, depth, index, row, rows) {
                 rows.push(Object.assign({}, row))
             } else {
                 for (const [subIndex, subItem] of Object.entries(item)) {
-                    processMetricItem(data, subItem, depth + 1, subIndex, row, rows)
+                    processMetricItem(sbksData, data, subItem, depth + 1, subIndex, row, rows)
                 }
             }
         }
@@ -79,18 +91,18 @@ function processMetricItem(data, item, depth, index, row, rows) {
 // Download the data respecting API limits
 async function getProfileData(sbksData) {
     let dateRange = adjustDateRange(sbksData.date_range)
-    let rows = [], response = null, metrics_response = null, profile_response = null
+    let rows = [], response = null, metricsResponse = null, profileResponse = null
     for (const [network, network_profiles] of Object.entries(sbksData.profiles_selected)) {
         response = null
         for (const [date_start, date_end] of Object.entries(splitDateRange(dateRange.start, dateRange.end, MAX_DAYS))) {
-            profile_response = null
+            profileResponse = null
             for (const profiles of chunkArray(Object.keys(network_profiles), MAX_PROFILES)) {
-                metrics_response = null
+                let requests = []
                 for (const metrics of chunkArray(sbksData.profile_metrics[network] || [], MAX_METRICS)) {
                     let dimensions = (sbksData.profile_dimensions[network] || []).map(dimension => {
                         return {type: dimension}
                     })
-                    let apiResponse = await doApiCall(
+                    requests.push(await doApiCall(
                         `3/${network}/metrics`, sbksData, {
                             date_start: date_start,
                             date_end: date_end,
@@ -98,34 +110,40 @@ async function getProfileData(sbksData) {
                             metrics: metrics,
                             dimensions: dimensions
                         }
-                    )
+                    ))
+                }
+
+                await Promise.all(requests)
+                metricsResponse = null
+                for (const request of requests) {
+                    let apiResponse = await request
                     if (!apiResponse) {
                         continue
                     }
 
-                    if (!metrics_response) {
-                        metrics_response = apiResponse
+                    if (!metricsResponse) {
+                        metricsResponse = apiResponse
                     } else {
-                        metrics_response = mergeHeader(metrics_response, apiResponse, ['metric'])
-                        metrics_response.data = deepmerge(
-                            metrics_response.data, apiResponse.data, {arrayMerge: combineMerge}
+                        metricsResponse = mergeHeader(metricsResponse, apiResponse, ['metric'])
+                        metricsResponse.data = deepmerge(
+                            metricsResponse.data, apiResponse.data, {arrayMerge: combineMerge}
                         )
                     }
                 }
 
-                if (!profile_response) {
-                    profile_response = metrics_response
+                if (!profileResponse) {
+                    profileResponse = metricsResponse
                 } else {
-                    profile_response = mergeHeader(profile_response, metrics_response, ['profile'])
-                    profile_response.data = deepmerge(profile_response.data, metrics_response.data)
+                    profileResponse = mergeHeader(profileResponse, metricsResponse, ['profile'])
+                    profileResponse.data = deepmerge(profileResponse.data, metricsResponse.data)
                 }
             }
 
             if (!response) {
-                response = profile_response
+                response = profileResponse
             } else {
-                mergeHeader(response, profile_response, ['date.day', 'date.week', 'date.month'])
-                response.data = deepmerge(response.data, profile_response.data)
+                response = mergeHeader(response, profileResponse, ['date.day', 'date.week', 'date.month'])
+                response.data = deepmerge(response.data, profileResponse.data)
             }
         }
 
@@ -134,10 +152,10 @@ async function getProfileData(sbksData) {
         }
 
         if (response.header.length === 1) {
-            processMetricItem(response, response.data, 0, 0, {platform: network}, rows)
+            processMetricItem(sbksData, response, response.data, 0, 0, {platform: network}, rows)
         } else {
             for (const [index, item] of Object.entries(response.data)) {
-                processMetricItem(response, item, 0, index, {platform: network}, rows)
+                processMetricItem(sbksData, response, item, 0, index, {platform: network}, rows)
             }
         }
     }

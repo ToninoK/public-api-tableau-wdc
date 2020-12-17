@@ -109,7 +109,7 @@ function initProfileMetricsAndDimensions() {
             data: dimensions.map(v => {
                 return {id: v, text: v}
             })
-        }).val(value).trigger('change')
+        }).val(value && value.length ? value : ['profile']).trigger('change')
     }).trigger('change')
 
     // Allow up to 1 custom dimension and ensure it's the last one selected

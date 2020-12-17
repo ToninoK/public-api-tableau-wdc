@@ -56,9 +56,7 @@ function renderAggregatedPostMetrics() {
 
     $aggregatedPostMetricsSelect.select2({
         multiple: true,
-        placeholder: 'Metrics',
-        data: metrics_available,
-        maximumSelectionLength: 1
+        data: metrics_available
     }).change(onMetricsChange)
 
     $aggregatedPostTimedimension.change(onMetricsChange)
@@ -71,10 +69,7 @@ function onMetricsChange() {
         for (const network of Object.keys(SBKS.profiles_selected)) {
             let metric_dimensions = AGGREGATED_POST_METRICS[network][metric]
             if (metric_dimensions) {
-                dimensions = !dimensions.length
-                    ? metric_dimensions
-                    : intersect(dimensions, metric_dimensions)
-                break
+                dimensions = !dimensions.length ? metric_dimensions : intersect(dimensions, metric_dimensions)
             }
         }
     }
@@ -86,7 +81,6 @@ function onMetricsChange() {
     let value = $dimensionsSelect.val()
     $dimensionsSelect.empty().select2({
         multiple: true,
-        placeholder: 'Dimensions',
         data: dimensions.map(v => {
             return {id: v, text: v}
         }),
