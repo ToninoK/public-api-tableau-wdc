@@ -56,6 +56,7 @@ $(function () {
         SBKS.data_source = $(this).data('source-type')
         $('#data_source').text($(this).text())
         renderProfiles()
+        $('#search').keyup()
     })
 
     $(document).on('change', '[data-select-multiple]', function () {
