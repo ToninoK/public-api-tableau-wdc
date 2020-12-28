@@ -97,6 +97,7 @@ let PROFILE_METRICS = {
     },
     youtube: {
         'interaction_change': PROFILE_COMMON_DIMENSIONS.concat(['interaction_type']),
+        'interactions_per_1k_fans': PROFILE_COMMON_DIMENSIONS,
         'subscribers_change': PROFILE_COMMON_DIMENSIONS,
         'subscribers_lifetime': PROFILE_COMMON_DIMENSIONS,
         'video_lifetime': PROFILE_COMMON_DIMENSIONS,
