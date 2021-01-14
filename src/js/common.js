@@ -68,11 +68,11 @@ function parseDateRange(value) {
 // When current date was selected as end date, shift the range to end today
 function adjustDateRange(dateRange) {
     let start = moment(dateRange.start, 'YYYY-MM-DD')
-    let end = moment(dateRange.start, 'YYYY-MM-DD')
+    let end = moment(dateRange.end, 'YYYY-MM-DD')
 
     if (dateRange.end_today) {
-        start = start.add(end.diff(start, 'days'), 'days').format('YYYY-MM-DD')
         end = moment().format('YYYY-MM-DD')
+        start = start.add(moment().diff(end, 'days'), 'days').format('YYYY-MM-DD')
     }
 
     return {start: start, end: end}

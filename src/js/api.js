@@ -2,7 +2,7 @@ function createHeaders() {
     return {
         'Content-Type': 'application/json; charset=utf-8',
         'Authorization': `Basic ${btoa(`${tableau.username}:${tableau.password}`)}`,
-        'x-api-consumer': 'Tableau V2'
+        'x-api-consumer': 'Tableau V3'
     }
 }
 

@@ -9,3 +9,15 @@ pages:
       - public
   only:
     - master
+
+deploy_aws_s3_node:
+  stage: deploy
+  image: 696577169457.dkr.ecr.eu-central-1.amazonaws.com/baseimages/node:14.15.4
+  script:
+    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    - unzip awscliv2.zip
+    - ./aws/install -i $HOME -b $HOME/bin
+    - npm i -g @sbks/maratonec-cli
+    - smrt env save production
+    - source .env
+    - $HOME/bin/aws s3 cp ./src/ s3://sbks-misc/misc-cdn/misc/api-connectors/tableau-connector --recursive
