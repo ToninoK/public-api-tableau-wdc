@@ -32,7 +32,15 @@ async function fetchProfilesAndLabels() {
             response.profiles.sort((a, b) => {
                 return a.name.localeCompare(b.name)
             })
+
             SBKS.profiles[network] = response.profiles
+
+            for(const profile of SBKS.profiles[network])
+                SBKS.profile_name_by_id[profile.id] = profile.name
+
+            SBKS.profiles_with_no_labels[network] = SBKS.profiles[network]
+                .filter(profile => !profile.profile_labels.length)
+                .map(profile => profile.id)
         }
     }
 

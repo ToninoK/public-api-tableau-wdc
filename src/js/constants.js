@@ -28,6 +28,8 @@ let SBKS = {
     profile_labels_selected: [],
     profile_metrics: {},
     profile_dimensions: {},
+    profiles_with_no_labels: {},
+    profile_name_by_id: {},
     aggregated_post_metrics: [],
     aggregated_post_dimensions: [],
     posts_filters: {},

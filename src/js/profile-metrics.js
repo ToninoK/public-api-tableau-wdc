@@ -43,7 +43,14 @@ async function onProfileMetricsSubmit(e) {
 
 function renderProfileMetrics() {
     $profileMetricsContent.html('')
+    let selected_with_no_labels = []
     for (const network of Object.keys(SBKS.profiles_selected)) {
+
+        selected_with_no_labels = [ ...selected_with_no_labels,
+            ...(Object.keys(SBKS.profiles_selected[network])
+            .filter(item => SBKS.profiles_with_no_labels[network].includes(item))
+        )]
+
         $profileMetricsContent.append($(`
             <div class="capitalize" style="padding: 8px 0 12px 0; margin-left: -5px">
                 <ion-icon style="vertical-align: sub; font-size: 22px;" 
@@ -61,6 +68,18 @@ function renderProfileMetrics() {
                 <select class="form-select" data-network="${network}" data-type="profile_dimensions" 
                         name="${network}-profile_dimensions"></select>
             </div>
+        `))
+    }
+    if(selected_with_no_labels.length){
+        $profileMetricsContent.append($(`
+        <div class="alert alert-info" role="alert">
+            Some profiles you selected don't have profile labels. If you select profile_label as a dimension
+            the data for that profile will not be shown.<br>
+            Profiles: ${selected_with_no_labels
+                .map(id => SBKS.profile_name_by_id[id])
+                .join(",")
+            }
+        </div>
         `))
     }
     $profileMetrics.show()
