@@ -21,3 +21,5 @@ deploy_aws_s3_node:
     - smrt env save production
     - source .env
     - $HOME/bin/aws s3 cp ./src/ s3://sbks-misc/misc-cdn/misc/api-connectors/tableau-connector --recursive
+  only:
+    - master
