@@ -44,7 +44,7 @@ function processPost(post) {
                 }
 
                 for (const subField of Object.keys(fieldObj.subfields)) {
-                    row[`${field}_${subField}_${i + 1}`] = item[subField]
+                    row[`${field}_${subField}_${parseInt(i, 10) + 1}`] = item[subField]
                 }
             }
         } else if (fieldObj.subfields && value) {
