@@ -43,7 +43,8 @@ function renderAggregatedPostMetrics() {
             if (!insights && metric.indexOf('insights') === 0) {
                 continue
             }
-            metrics_available.push({id: metric, text: metric})
+            if(!metrics_available.find(met=>met.id === metric))
+                metrics_available.push({id: metric, text: metric})
         }
     }
 

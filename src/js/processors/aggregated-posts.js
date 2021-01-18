@@ -41,6 +41,7 @@ async function getAggregatedPostData(sbksData) {
                     metricsResponse = apiResponse
                 } else {
                     metricsResponse = mergeHeader(metricsResponse, apiResponse, ['metric'])
+                    metricsResponse = mergeHeader(metricsResponse, apiResponse, ['profile'])
 
                     metricsResponse.data = deepmerge(
                         metricsResponse.data, apiResponse.data, {arrayMerge: combineMerge}

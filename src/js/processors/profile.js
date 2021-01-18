@@ -34,12 +34,15 @@ function mergeHeader(a, b, match) {
         if (match.indexOf(aHeader.type) !== -1) {
             for (const bHeader of b.header) {
                 if (match.indexOf(bHeader.type) !== -1) {
-                    a.header[i].rows.push(...bHeader.rows)
+                    for (const row of bHeader.rows)
+                        if(match[0] === "profile" && !a.header[i].rows.find(x => x.id === row.id))
+                            a.header[i].rows.push(row)
+                        else if(match[0] !== "profile")
+                            a.header[i].rows.push(row)
                 }
             }
         }
     }
-
     return a
 }
 
