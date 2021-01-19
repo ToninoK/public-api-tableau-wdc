@@ -1,4 +1,5 @@
 let $aggregatedPostMetrics = $('#aggregatedPostMetrics')
+let $missingProfileLabels = $('#missingProfileLabels')
 let $aggregatedPostMetricsSpinner = $('#aggregatedPostMetricsSpinner').hide()
 let $dimensionsSelect = $('#aggregated_post_dimensions')
 let $aggregatedPostMetricsSelect = $('#aggregated_post_metrics')
@@ -36,7 +37,9 @@ async function onAggregatedPostMetricsSubmit(e) {
 
 function renderAggregatedPostMetrics() {
     $aggregatedPostMetrics.show()
+    $missingProfileLabels.empty()
     let metrics_available = []
+    let selected_with_no_labels = []
     for (const [network, profiles] of Object.entries(SBKS.profiles_selected)) {
         let insights = Object.entries(profiles).find(v => v[1] ? v : null)
         for (const metric of Object.keys(AGGREGATED_POST_METRICS[network])) {
@@ -46,6 +49,10 @@ function renderAggregatedPostMetrics() {
             if(!metrics_available.find(met=>met.id === metric))
                 metrics_available.push({id: metric, text: metric})
         }
+        selected_with_no_labels = [ ...selected_with_no_labels,
+            ...(Object.keys(profiles)
+            .filter(item => SBKS.profiles_with_no_labels[network].includes(item))
+        )]
     }
 
     // Fix the positioning bug with select2
@@ -61,6 +68,19 @@ function renderAggregatedPostMetrics() {
     }).change(onMetricsChange)
 
     $aggregatedPostTimedimension.change(onMetricsChange)
+
+    if(selected_with_no_labels.length){
+        $missingProfileLabels.append($(`
+        <div class="alert alert-info" role="alert">
+            Some profiles you selected don't have profile labels. If you select profile_label as a dimension
+            the data for that profile will not be shown.<br>
+            Profiles: ${selected_with_no_labels
+                .map(id => SBKS.profile_name_by_id[id])
+                .join(", ")
+            }
+        </div>
+        `))
+    }
 }
 
 function onMetricsChange() {

@@ -77,7 +77,7 @@ function renderProfileMetrics() {
             the data for that profile will not be shown.<br>
             Profiles: ${selected_with_no_labels
                 .map(id => SBKS.profile_name_by_id[id])
-                .join(",")
+                .join(", ")
             }
         </div>
         `))
