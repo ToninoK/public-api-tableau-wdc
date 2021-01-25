@@ -17,9 +17,10 @@ deploy_aws_s3_node:
     - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     - unzip awscliv2.zip
     - ./aws/install -i $HOME -b $HOME/bin
-    - npm i -g @sbks/maratonec-cli
+    - npm i -g @sbks/maratonec-cli gulp
+    - gulp
     - smrt env save production
     - source .env
-    - $HOME/bin/aws s3 cp ./src/ s3://sbks-misc/misc-cdn/misc/api-connectors/tableau-connector --recursive --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate
+    - $HOME/bin/aws s3 cp ./dist/ s3://sbks-misc/misc-cdn/misc/api-connectors/tableau-connector --recursive --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate
   only:
     - master
