@@ -17,7 +17,8 @@ deploy_aws_s3_node:
     - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     - unzip awscliv2.zip
     - ./aws/install -i $HOME -b $HOME/bin
-    - npm i -g @sbks/maratonec-cli gulp
+    - npm i -g @sbks/maratonec-cli gulp-cli
+    - npm install gulp gulp-imagemin gulp-concat gulp-terser gulp-change gulp-sourcemaps
     - gulp
     - smrt env save production
     - source .env

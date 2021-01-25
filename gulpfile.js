@@ -3,10 +3,8 @@ const imagemin = require('gulp-imagemin')
 const concat = require('gulp-concat')
 const terser = require('gulp-terser')
 const sourcemaps = require('gulp-sourcemaps')
-const htmlReplace = require('gulp-html-replace')
 const change = require('gulp-change')
 const {src, parallel, dest} = require('gulp')
-const { AST_Toplevel } = require('terser')
 
 const jsPath = 'src/**/*.js';
 
