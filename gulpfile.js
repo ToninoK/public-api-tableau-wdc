@@ -6,7 +6,7 @@ const sourcemaps = require('gulp-sourcemaps')
 const change = require('gulp-change')
 const {src, parallel, dest} = require('gulp')
 
-const jsPath = 'src/**/*.js';
+const jsPath = '*.js';
 
 function performChange(content, done){
     let regex = /^<script src="js\/(?:\S|\s(?!<\/body>))+/gims
@@ -15,13 +15,13 @@ function performChange(content, done){
 }
 
 function copyHtml(){
-    return src('src/*.html')
+    return src('*.html')
         .pipe(change(performChange))
         .pipe(gulp.dest('dist'))
 }
 
 function imgTask(){
-    return src('src/images/*').pipe(imagemin()).pipe(gulp.dest('dist/images'))
+    return src('images/*').pipe(imagemin()).pipe(gulp.dest('dist/images'))
 }
 
 function jsTask(){
