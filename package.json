@@ -1,0 +1,31 @@
+{
+  "name": "tableau-connector",
+  "version": "1.0.0",
+  "description": "[https://socialbakers.github.io/public-api-tableau-wdc/socialbakers_api_wdc](https://socialbakers.github.io/public-api-tableau-wdc/socialbakers_api_wdc)",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-change": "^1.0.2",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-cli": "^2.3.0",
+    "gulp-imagemin": "^7.1.0",
+    "gulp-terser": "^2.0.1",
+    "pre-commit": "^1.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "minify": "gulp",
+    "add": "git add socialbakers_api_wdc.html all.js all.js.map"
+  },
+  "pre-commit":[
+    "minify",
+    "add"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@git.ccl:api-connectors/tableau-connector.git"
+  },
+  "author": ""
+}
