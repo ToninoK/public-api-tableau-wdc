@@ -22,6 +22,6 @@ deploy_aws_s3_node:
     - gulp
     - smrt env save production
     - source .env
-    - $HOME/bin/aws s3 cp ./dist/ s3://sbks-misc/misc-cdn/misc/api-connectors/tableau-connector --recursive --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate
+    - $HOME/bin/aws s3 cp ./ s3://sbks-misc/misc-cdn/misc/api-connectors/tableau-connector --recursive --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate
   only:
     - master
