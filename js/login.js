@@ -26,7 +26,7 @@ async function fetchProfilesAndLabels() {
                 'API authorization failed',
                 `API connection failed.<br><br><code>${JSON.stringify(response.errors)}</code>`
             )
-            return
+            return -1
         }
         if (response.profiles.length) {
             response.profiles.sort((a, b) => {
@@ -79,9 +79,11 @@ async function onLoginSubmit(e) {
     tableau.username = $('#token').val()
     tableau.password = $('#secret').val()
 
-    await fetchProfilesAndLabels()
-
-    $loginSpinner.hide()
+    let result = await fetchProfilesAndLabels()
+    if (result == -1){
+        $loginSpinner.hide()
+        return
+    }
     $login.hide()
     renderProfiles()
 }
@@ -90,6 +92,7 @@ function showModal(title, body) {
     $('#modalTitle').text(title)
     $('#modalBody').html(body)
     let modal = new bootstrap.Modal(document.getElementById('modal'))
+    $('#modalButton').click((e)=> {modal.hide()})
     modal.show()
 }
 
