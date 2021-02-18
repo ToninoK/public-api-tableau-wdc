@@ -11,13 +11,25 @@ function preparePostsParams(sbksData, network, params) {
         }
     }
 
+    // Field can also be a network in case of advanced filtering -> the else if handles that case 
     for (const [field, value] of Object.entries(sbksData.posts_filters)) {
-        if (field === 'post_labels' || POSTS_FILTER_FIELDS[field][network].length > 0) {
+        if (field === 'post_labels') {
             params.filter = params.filter || []
             params.filter.push({field: field, value: value})
         }
+        else if (field in POSTS_FILTER_FIELDS && POSTS_FILTER_FIELDS[field][network].length > 0) {
+            params.filter = params.filter || []
+            let intersect = value.filter(v => POSTS_FILTER_FIELDS[field][network].includes(v))
+            params.filter.push({field: field, value: intersect})
+        }
+        else if(!(field in POSTS_FILTER_FIELDS) && field == network){
+            for(const [fld, val] of Object.entries(value))
+                if(POSTS_FILTER_FIELDS[fld][network].length > 0){
+                    params.filter = params.filter || []
+                    params.filter.push({field: fld, value: val})
+                }
+        }
     }
-
     return params
 }
 

@@ -7,8 +7,7 @@ pages:
   artifacts:
     paths:
       - public
-  only:
-    - master
+  when: manual
 
 deploy_aws_s3_node:
   stage: deploy

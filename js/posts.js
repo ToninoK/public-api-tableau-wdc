@@ -1,10 +1,15 @@
-let $posts = $('#posts')
+let $postsDiv = $('#posts')
+let $posts = $('#postsForm')
 let $postsSorts = $('#postsSorts')
 let $postsSpinner = $('#postsSpinner').hide()
+let $advancedFilteringSwitch = $('#advancedFiltering')
+let $basicFiltering = $('#basicFiltering')
 
 $(function () {
     $posts.submit(onPostsSubmit)
 })
+
+$advancedFilteringSwitch.change(toggleAdvancedFiltering)
 
 function processFormField(data, item) {
     data = data || {}
@@ -42,6 +47,12 @@ async function onPostsSubmit(e) {
                 skip = true
                 break
             }
+            if(!skip && item.name.indexOf(network) > 0) {
+                item.name = item.name.replace(`_${network}`, '')
+                posts_filters[network] = processFormField(posts_filters[network], item)
+                skip = true
+                break
+            }
         }
 
         if (skip) {
@@ -59,44 +70,9 @@ async function onPostsSubmit(e) {
     invokeConnector(SBKS.data_source)
 }
 
-function renderPosts() {
-    $postsSorts.html('')
-    for (const network of Object.keys(SBKS.profiles_selected)) {
-        $postsSorts.append($(`
-            <div class="capitalize" style="padding: 8px 0 12px 0; margin-left: -5px">
-                <ion-icon style="vertical-align: sub; font-size: 22px;" 
-                    title="${network}" name="${SBKS.icons[network]}"></ion-icon> 
-                ${network}
-            </div>
-            <div class="input-group mb-3">
-                <label class="input-group-text">Fields</label>
-                <select class="form-select" data-fields="${network}" name="${network}-fields[]"></select>          
-            </div>
-            <div class="input-group mb-3" style="${network === 'twitter' ? 'display:none' : ''}">
-                <label class="input-group-text">Sort</label>
-                <select class="form-select" data-sort="${network}" name="${network}-sort[]" multiple></select>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="input-group mb-3" style="${network === 'twitter' ? 'display:none' : ''}">
-                        <label class="input-group-text">Order</label>
-                        <select class="form-select" name="${network}-order">
-                            <option value="asc">Ascending</option>
-                            <option value="desc" selected>Descending</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="input-group mb-3">
-                        <label class="input-group-text">Limit</label>
-                        <input type="number" min="1" max="100" value="100" class="form-control" name="${network}-limit">
-                    </div>
-                </div>
-            </div>
-        `))
-    }
-
-    $posts.show()
+function renderPosts(advancedFiltering=false) {
+    renderPostsSorts(advancedFiltering)
+    $postsDiv.show()
 
     // Fix the positioning bug with select2
     $('select').each(function () {
@@ -157,4 +133,103 @@ function renderPosts() {
     })
 
     $('select.form-select[multiple]').select2()
+}
+
+function toggleAdvancedFiltering(){
+    $basicFiltering.toggle()
+    let advancedFilteringOn = !$basicFiltering.is(':visible')
+    renderPosts(advancedFilteringOn)
+}
+
+function renderPostsSorts(advancedFiltering){
+    $postsSorts.html('')
+
+    filters = (network) => ''
+    if(advancedFiltering)
+        filters = (network) => {
+            return `<div class="input-group mb-3" id="content_type_${network}_container">
+            <label for="content_type" class="input-group-text">Content Type</label>
+            <select class="form-select" name="content_type_${network}[]" id="content_type_${network}" multiple>
+            </select>
+            </div>
+            <div class="input-group mb-3" id="grade_${network}_container">
+                <label for="grade" class="input-group-text">Grade</label>
+                <select class="form-select" name="grade_${network}[]" id="grade_${network}" multiple>
+                </select>
+            </div>
+            <div class="input-group mb-3" id="media_type_${network}_container">
+                <label for="media_type" class="input-group-text">Media Type</label>
+                <select class="form-select" name="media_type_${network}[]" id="media_type_${network}" multiple>
+                </select>
+            </div>
+            <div class="input-group mb-3" id="origin_${network}_container">
+                <label for="origin" class="input-group-text">Origin</label>
+                <select class="form-select" name="origin_${network}" id="origin_${network}">
+                    <option value=""></option>
+                </select>
+            </div>
+            <div class="input-group mb-3" id="post_attribution_${network}_container">
+                <label for="post_attribution" class="input-group-text">Post Attribution</label>
+                <select class="form-select" name="post_attribution_${network}" id="post_attribution_${network}">
+                    <option value=""></option>
+                </select>
+            </div>
+            <div class="input-group mb-3" id="video_type_${network}_container">
+                <label for="video_type" class="input-group-text">Video Type</label>
+                <select class="form-select" name="video_type_${network}[]" id="video_type_${network}" multiple>
+                </select>
+            </div>`
+        }
+    for (const network of Object.keys(SBKS.profiles_selected)) {
+        $postsSorts.append($(`
+            <div class="capitalize" style="padding: 8px 0 12px 0; margin-left: -5px">
+                <ion-icon style="vertical-align: sub; font-size: 22px;" 
+                    title="${network}" name="${SBKS.icons[network]}"></ion-icon> 
+                ${network}
+            </div>
+            ${filters(network)}
+            <div class="input-group mb-3">
+                <label class="input-group-text">Fields</label>
+                <select class="form-select" data-fields="${network}" name="${network}-fields[]"></select>          
+            </div>
+            <div class="input-group mb-3" style="${network === 'twitter' ? 'display:none' : ''}">
+                <label class="input-group-text">Sort</label>
+                <select class="form-select" data-sort="${network}" name="${network}-sort[]" multiple></select>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3" style="${network === 'twitter' ? 'display:none' : ''}">
+                        <label class="input-group-text">Order</label>
+                        <select class="form-select" name="${network}-order">
+                            <option value="asc">Ascending</option>
+                            <option value="desc" selected>Descending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text">Limit</label>
+                        <input type="number" min="1" max="100" value="100" class="form-control" name="${network}-limit">
+                    </div>
+                </div>
+            </div>
+        `))
+        for(const [filter, value] of Object.entries(POSTS_FILTER_FIELDS)) {
+            console.log(`${filter}_${network}`)
+            $.each(value[network], (i, item) => {
+                $(`#${filter}_${network}`).append($('<option>', {
+                    value: item,
+                    text: item.charAt(0).toUpperCase() + item.slice(1)
+                }))
+            })
+
+            let filter_select = document.getElementById(`${filter}_${network}`)
+            if (!filter_select)
+                continue
+            let options = filter_select.options
+            if (options.length === 0 || (options.length === 1 && options[0].value === ""))
+                $(`#${filter}_${network}_container`).hide()
+        }
+    }
+
 }
