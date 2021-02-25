@@ -5,11 +5,11 @@
   "main": "gulpfile.js",
   "dependencies": {
     "gulp": "^4.0.2",
-    "gulp-concat": "^2.6.1",
     "gulp-change": "^1.0.2",
-    "gulp-sourcemaps": "^3.0.0",
     "gulp-cli": "^2.3.0",
+    "gulp-concat": "^2.6.1",
     "gulp-imagemin": "^7.1.0",
+    "gulp-sourcemaps": "^3.0.0",
     "gulp-terser": "^2.0.1",
     "pre-commit": "^1.2.2"
   },
@@ -19,7 +19,7 @@
     "minify": "gulp",
     "add": "git add socialbakers_api_wdc.html all.js all.js.map"
   },
-  "pre-commit":[
+  "pre-commit": [
     "minify",
     "add"
   ],

@@ -280,11 +280,11 @@ let POSTS_FILTER_FIELDS = {
     content_type: {
         facebook: ['post', 'shared'],
         instagram: ['post', 'story'],
-        twitter: ['post', 'shared', 'reply'],
+        twitter: [],
         youtube: [],
         linkedin: [],
         pinterest: ['post', 'shared'],
-        vkontakte: ['status', 'photo', 'video', 'link', 'note', 'poll', 'album']
+        vkontakte: []
     },
     grade: {
         facebook: ['A+', 'A', 'B', 'C', 'D'],
@@ -299,10 +299,10 @@ let POSTS_FILTER_FIELDS = {
         facebook: ['status', 'link', 'video', 'note', 'poll', 'offer', 'photo', 'carousel'],
         instagram: ['video', 'photo', 'carousel'],
         youtube: ['video'],
-        twitter: ['status', 'link', 'video', 'photo', 'animated_gif'],
-        linkedin: [],
+        twitter: [],
+        linkedin: ['status', 'link', 'video', 'photo', 'album', 'carousel'],
         pinterest: [],
-        vkontakte: []
+        vkontakte: ['status', 'photo', 'video', 'link', 'note', 'poll', 'album']
     },
     origin: {
         facebook: ['User-Generated Content', 'Brand\'s Content'],
