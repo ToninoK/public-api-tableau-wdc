@@ -70,8 +70,8 @@ async function onPostsSubmit(e) {
     invokeConnector(SBKS.data_source)
 }
 
-function renderPosts(advancedFiltering=false) {
-    renderPostsSorts(advancedFiltering)
+function renderPosts() {
+    renderPostsSorts($('#advancedFiltering').is(':checked'))
     $postsDiv.show()
 
     // Fix the positioning bug with select2
@@ -137,8 +137,7 @@ function renderPosts(advancedFiltering=false) {
 
 function toggleAdvancedFiltering(){
     $basicFiltering.toggle()
-    let advancedFilteringOn = !$basicFiltering.is(':visible')
-    renderPosts(advancedFilteringOn)
+    renderPosts()
 }
 
 function renderPostsSorts(advancedFiltering){
@@ -215,7 +214,6 @@ function renderPostsSorts(advancedFiltering){
             </div>
         `))
         for(const [filter, value] of Object.entries(POSTS_FILTER_FIELDS)) {
-            console.log(`${filter}_${network}`)
             $.each(value[network], (i, item) => {
                 $(`#${filter}_${network}`).append($('<option>', {
                     value: item,
