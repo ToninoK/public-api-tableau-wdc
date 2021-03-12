@@ -225,10 +225,6 @@
 
 <!-- POSTS -->
 <div id="posts" style="display:none;">
-    <div class="form-check form-switch advancedSlider">
-        <input class="form-check-input" type="checkbox" id="advancedFiltering">
-        <label class="form-check-label" for="advancedFiltering">Advanced Filtering</label>
-    </div>
     <form id="postsForm">
         <div class="input-group mb-3">
             <label for="post_daterange" class="input-group-text">
@@ -240,67 +236,7 @@
             <label for="post_labels" class="input-group-text">Post Labels</label>
             <select class="form-select" name="post_labels[]" id="post_labels" multiple></select>
         </div>
-        <div id="basicFiltering">
-            <div class="input-group mb-3">
-                <label for="content_type" class="input-group-text">Content Type</label>
-                <select class="form-select" name="content_type[]" id="content_type" multiple>
-                    <option value="post">Post</option>
-                    <option value="shared">Shared</option>
-                    <option value="story">Story</option>
-                    <option value="reply">Reply</option>
-                </select>
-            </div>
-            <div class="input-group mb-3">
-                <label for="grade" class="input-group-text">Grade</label>
-                <select class="form-select" name="grade[]" id="grade" multiple>
-                    <option value="A+">A+</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                </select>
-            </div>
-            <div class="input-group mb-3">
-                <label for="media_type" class="input-group-text">Media Type</label>
-                <select class="form-select" name="media_type[]" id="media_type" multiple>
-                    <option value="status">Status</option>
-                    <option value="link">Link</option>
-                    <option value="video">Video</option>
-                    <option value="note">Note</option>
-                    <option value="poll">Poll</option>
-                    <option value="offer">Offer</option>
-                    <option value="photo">Photo</option>
-                    <option value="album">Album</option>
-                    <option value="carousel">Carousel</option>
-                    <option value="animated_gif">Animated GIF</option>
-                </select>
-            </div>
-            <div class="input-group mb-3">
-                <label for="origin" class="input-group-text">Origin</label>
-                <select class="form-select" name="origin" id="origin">
-                    <option value=""></option>
-                    <option value="User-Generated Content">User-Generated Content</option>
-                    <option value="Brand's Content">Brand's Content</option>
-                </select>
-            </div>
-            <div class="input-group mb-3">
-                <label for="post_attribution" class="input-group-text">Post Attribution</label>
-                <select class="form-select" name="post_attribution" id="post_attribution">
-                    <option value=""></option>
-                    <option value="organic">Organic</option>
-                    <option value="paid">Paid</option>
-                </select>
-            </div>
-            <div class="input-group mb-3">
-                <label for="video_type" class="input-group-text">Video Type</label>
-                <select class="form-select" name="video_type[]" id="video_type" multiple>
-                    <option value="crosspost">Crosspost</option>
-                    <option value="crosspostable">Crosspostable</option>
-                    <option value="live">Live</option>
-                    <option value="shared">Shared</option>
-                </select>
-            </div>
-        </div>
+
         <div id="postsSorts"></div>
 
         <button type="button" title="Back" class="btn btn-secondary back">

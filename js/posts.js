@@ -9,8 +9,6 @@ $(function () {
     $posts.submit(onPostsSubmit)
 })
 
-$advancedFilteringSwitch.change(toggleAdvancedFiltering)
-
 function processFormField(data, item) {
     data = data || {}
     if (item.name.indexOf('[]') !== -1) {
@@ -71,7 +69,8 @@ async function onPostsSubmit(e) {
 }
 
 function renderPosts() {
-    renderPostsSorts($('#advancedFiltering').is(':checked'))
+    $postsSorts.empty()
+    renderPostsSorts()
     $postsDiv.show()
 
     // Fix the positioning bug with select2
@@ -135,50 +134,42 @@ function renderPosts() {
     $('select.form-select[multiple]').select2()
 }
 
-function toggleAdvancedFiltering(){
-    $basicFiltering.toggle()
-    renderPosts()
-}
 
-function renderPostsSorts(advancedFiltering){
-    $postsSorts.html('')
-
-    filters = (network) => ''
-    if(advancedFiltering)
-        filters = (network) => {
-            return `<div class="input-group mb-3" id="content_type_${network}_container">
-            <label for="content_type" class="input-group-text">Content Type</label>
-            <select class="form-select" name="content_type_${network}[]" id="content_type_${network}" multiple>
+function renderPostsSorts(){
+    filters = (network) => {
+        return `<div class="input-group mb-3" id="content_type_${network}_container">
+        <label for="content_type" class="input-group-text">Content Type</label>
+        <select class="form-select" name="content_type_${network}[]" id="content_type_${network}" multiple>
+        </select>
+        </div>
+        <div class="input-group mb-3" id="grade_${network}_container">
+            <label for="grade" class="input-group-text">Grade</label>
+            <select class="form-select" name="grade_${network}[]" id="grade_${network}" multiple>
             </select>
-            </div>
-            <div class="input-group mb-3" id="grade_${network}_container">
-                <label for="grade" class="input-group-text">Grade</label>
-                <select class="form-select" name="grade_${network}[]" id="grade_${network}" multiple>
-                </select>
-            </div>
-            <div class="input-group mb-3" id="media_type_${network}_container">
-                <label for="media_type" class="input-group-text">Media Type</label>
-                <select class="form-select" name="media_type_${network}[]" id="media_type_${network}" multiple>
-                </select>
-            </div>
-            <div class="input-group mb-3" id="origin_${network}_container">
-                <label for="origin" class="input-group-text">Origin</label>
-                <select class="form-select" name="origin_${network}" id="origin_${network}">
-                    <option value=""></option>
-                </select>
-            </div>
-            <div class="input-group mb-3" id="post_attribution_${network}_container">
-                <label for="post_attribution" class="input-group-text">Post Attribution</label>
-                <select class="form-select" name="post_attribution_${network}" id="post_attribution_${network}">
-                    <option value=""></option>
-                </select>
-            </div>
-            <div class="input-group mb-3" id="video_type_${network}_container">
-                <label for="video_type" class="input-group-text">Video Type</label>
-                <select class="form-select" name="video_type_${network}[]" id="video_type_${network}" multiple>
-                </select>
-            </div>`
-        }
+        </div>
+        <div class="input-group mb-3" id="media_type_${network}_container">
+            <label for="media_type" class="input-group-text">Media Type</label>
+            <select class="form-select" name="media_type_${network}[]" id="media_type_${network}" multiple>
+            </select>
+        </div>
+        <div class="input-group mb-3" id="origin_${network}_container">
+            <label for="origin" class="input-group-text">Origin</label>
+            <select class="form-select" name="origin_${network}" id="origin_${network}">
+                <option value=""></option>
+            </select>
+        </div>
+        <div class="input-group mb-3" id="post_attribution_${network}_container">
+            <label for="post_attribution" class="input-group-text">Post Attribution</label>
+            <select class="form-select" name="post_attribution_${network}" id="post_attribution_${network}">
+                <option value=""></option>
+            </select>
+        </div>
+        <div class="input-group mb-3" id="video_type_${network}_container">
+            <label for="video_type" class="input-group-text">Video Type</label>
+            <select class="form-select" name="video_type_${network}[]" id="video_type_${network}" multiple>
+            </select>
+        </div>`
+    }
     for (const network of Object.keys(SBKS.profiles_selected)) {
         $postsSorts.append($(`
             <div class="capitalize" style="padding: 8px 0 12px 0; margin-left: -5px">
