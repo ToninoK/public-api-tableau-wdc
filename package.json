@@ -14,7 +14,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "minify": "grunt",
-    "add": "git add socialbakers_api_wdc_need_fix.html all.js all.js.map"
+    "add": "git add socialbakers_api_wdc_need_fix.html all.min.js"
   },
   "pre-commit": [
     "minify",
