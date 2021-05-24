@@ -27,6 +27,7 @@ async function onPostsSubmit(e) {
     $postsSpinner.show()
 
     let posts_filters = {}, posts_networks = {}
+    let country_metric_selected = false;
     for (const item of $posts.serializeArray()) {
         if (['', undefined, null].includes(item.value)) {
             continue
@@ -40,6 +41,9 @@ async function onPostsSubmit(e) {
         let skip = false
         for (const network of SBKS.networks) {
             if (item.name.indexOf(network) === 0) {
+                if (item.value === 'insights_video_view_time_by_country'){
+                    country_metric_selected = true
+                }
                 item.name = item.name.replace(`${network}-`, '')
                 posts_networks[network] = processFormField(posts_networks[network], item)
                 skip = true
@@ -58,6 +62,18 @@ async function onPostsSubmit(e) {
         }
 
         posts_filters = processFormField(posts_filters, item)
+    }
+
+    if (country_metric_selected && posts_networks['facebook']['fields'].length != 1){
+        $postsSpinner.hide()
+        showModal(
+            'Field combination not allowed',
+            'The field: <code>Insights video view time by country</code> cannot be combined with other fields'
+        )
+        return
+    }
+    if (country_metric_selected) {
+        posts_networks['facebook']['fields'].push('country')
     }
 
     SBKS.posts_filters = posts_filters
@@ -119,6 +135,9 @@ function renderPosts() {
 
         let data = []
         for (const [field, config] of Object.entries(POSTS_FIELDS)) {
+            if (field === 'country') {
+                continue
+            }
             if (insights && field.indexOf('insights') === 0) {
                 continue
             }
