@@ -1,6 +1,11 @@
 function preparePostsParams(sbksData, network, params) {
     params.fields = sbksData.posts_networks[network].fields
-
+    if (params.fields.includes('country')) {
+        params.fields.splice(params.fields.indexOf('country'), 1)
+    }
+    if (params.fields.includes('gender_age')) {
+        params.fields.splice(params.fields.indexOf('gender_age'), 1)
+    }
     if (sbksData.posts_networks[network].sort) {
         params.sort = params.sort || []
         for (const field of sbksData.posts_networks[network].sort) {
@@ -56,18 +61,41 @@ function processPost(post) {
                 }
 
                 for (const subField of Object.keys(fieldObj.subfields)) {
-                    row[`${field}_${subField}_${parseInt(i, 10) + 1}`] = item[subField]
+                    let formattedSubField = subField
+                        .replace(/./g, '_')
+                        .replace(/-/g, '_')
+                    row[`${field}_${formattedSubField}_${parseInt(i, 10) + 1}`] = item[subField]
                 }
             }
         } else if (fieldObj.subfields && value) {
-            for (const subField of Object.keys(fieldObj.subfields)) {
-                row[`${field}_${subField}`] = value[subField]
+            for (const subField of Object.keys(value)) {
+                let formattedSubField = subField
+                    .replace(/./g, '_')
+                    .replace(/-/g, '_')
+                row[`${field}_${formattedSubField}`] = value[subField]
             }
         }
     }
 
     return row
 }
+
+
+function processFakeDimResponse(post, data){
+    let byCountry = post.insights_video_view_time_by_country
+    let byGenderAge = post.insights_video_view_time_by_gender_age
+    let edgeCase = byCountry ? byCountry : byGenderAge
+    if (!edgeCase){
+        return
+    }
+    for ([key, value] of Object.entries(edgeCase)) {
+        if (data.hasOwnProperty(key))
+            data[key] += value
+        else
+            data[key] = value
+    }
+}
+
 
 async function getPostsData(sbksData) {
     let requests = []
@@ -85,6 +113,8 @@ async function getPostsData(sbksData) {
     }
 
     let rows = []
+    let fakeDimData = {}
+    let typeOfFakeDim = null
     await Promise.all(requests)
     for (const request of requests) {
         let apiResponse = await request
@@ -93,9 +123,21 @@ async function getPostsData(sbksData) {
         }
 
         for (const post of apiResponse.data.posts) {
+            if (post.hasOwnProperty('insights_video_view_time_by_country') || post.hasOwnProperty('insights_video_view_time_by_gender_age')){
+                typeOfFakeDim = post.hasOwnProperty('insights_video_view_time_by_country') ? 'country' : 'gender_age'
+                processFakeDimResponse(post, fakeDimData)
+                continue
+            }
             rows.push(processPost(post))
         }
     }
-
+    if (!rows.length){
+        for ([key, value] of Object.entries(fakeDimData)) {
+            data = {}
+            data[typeOfFakeDim] = key
+            data[`insights_video_view_time_by_${typeOfFakeDim}`] = value
+            rows.push(data)
+        }
+    }
     return rows
 }

@@ -540,6 +540,22 @@ let POSTS_FIELDS = {
             paid: tableau.dataTypeEnum.int
         }
     },
+    country: {
+        networks: ['facebook'],
+        type: tableau.dataTypeEnum.string
+    },
+    insights_video_view_time_by_country: {
+        networks: ['facebook'],
+        type: tableau.dataTypeEnum.int
+    },
+    gender_age: {
+        networks: ['facebook'],
+        type: tableau.dataTypeEnum.string
+    },
+    insights_video_view_time_by_gender_age: {
+        networks: ['facebook'],
+        type: tableau.dataTypeEnum.int
+    },
     insights_video_views: {networks: ['facebook', 'instagram'], type: tableau.dataTypeEnum.int},
     insights_video_views_10s: {networks: ['facebook'], type: tableau.dataTypeEnum.int},
     insights_video_views_10s_by_play_type: {

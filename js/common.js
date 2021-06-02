@@ -71,11 +71,11 @@ function adjustDateRange(dateRange) {
     let end = moment(dateRange.end, 'YYYY-MM-DD')
 
     if (dateRange.end_today) {
-        end = moment().format('YYYY-MM-DD')
-        start = start.add(moment().diff(end, 'days'), 'days').format('YYYY-MM-DD')
+        end = moment()
+        start = start.add(moment().diff(end, 'days'), 'days')
     }
 
-    return {start: start, end: end}
+    return {start: start.format('YYYY-MM-DD'), end: end.format('YYYY-MM-DD')}
 }
 
 $(function () {

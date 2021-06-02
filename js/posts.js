@@ -27,6 +27,8 @@ async function onPostsSubmit(e) {
     $postsSpinner.show()
 
     let posts_filters = {}, posts_networks = {}
+    let country_metric_selected = false
+    let gender_age_metric_selected = false
     for (const item of $posts.serializeArray()) {
         if (['', undefined, null].includes(item.value)) {
             continue
@@ -40,6 +42,12 @@ async function onPostsSubmit(e) {
         let skip = false
         for (const network of SBKS.networks) {
             if (item.name.indexOf(network) === 0) {
+                if (item.value === 'insights_video_view_time_by_country'){
+                    country_metric_selected = true
+                }
+                if (item.value === 'insights_video_view_time_by_gender_age'){
+                    gender_age_metric_selected = true
+                }
                 item.name = item.name.replace(`${network}-`, '')
                 posts_networks[network] = processFormField(posts_networks[network], item)
                 skip = true
@@ -60,12 +68,41 @@ async function onPostsSubmit(e) {
         posts_filters = processFormField(posts_filters, item)
     }
 
+    if (!showModalIfNotValid(country_metric_selected, gender_age_metric_selected, posts_networks['facebook']['fields'])) {
+        $postsSpinner.hide()
+        return
+    }
+    
+    if (country_metric_selected) {
+        posts_networks['facebook']['fields'].push('country')
+    }
+    if (gender_age_metric_selected) {
+        posts_networks['facebook']['fields'].push('gender_age')
+    }
     SBKS.posts_filters = posts_filters
     SBKS.posts_networks = posts_networks
 
     tableau.connectionData = JSON.stringify(SBKS)
 
     invokeConnector(SBKS.data_source)
+}
+
+function showModalIfNotValid(countrySelected, genderAgeSelected, fields){
+    if (countrySelected && fields.length != 1){
+        showModal(
+            'Field combination not allowed',
+            'The field: <code>Insights video view time by country</code> cannot be combined with other fields'
+        )
+        return false
+    }
+    if (genderAgeSelected && fields.length != 1) {
+        showModal(
+            'Field combination not allowed',
+            'The field: <code>Insights video view time by gender age</code> cannot be combined with other fields'
+        )
+        return false
+    }
+    return true
 }
 
 function renderPosts() {
@@ -119,7 +156,10 @@ function renderPosts() {
 
         let data = []
         for (const [field, config] of Object.entries(POSTS_FIELDS)) {
-            if (insights && field.indexOf('insights') === 0) {
+            if (field === 'country' || field === 'gender_age') {
+                continue
+            }
+            if (!insights && field.indexOf('insights') === 0) {
                 continue
             }
             if (config.networks.includes(network)) {
