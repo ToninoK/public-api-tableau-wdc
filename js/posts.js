@@ -45,7 +45,7 @@ async function onPostsSubmit(e) {
                 if (item.value === 'insights_video_view_time_by_country'){
                     country_metric_selected = true
                 }
-                if (item.value === 'insights_video_view_time_by_gender_age'){
+                if (item.value === 'insights_video_view_time_by_gender_age_v2'){
                     gender_age_metric_selected = true
                 }
                 item.name = item.name.replace(`${network}-`, '')
@@ -98,7 +98,7 @@ function showModalIfNotValid(countrySelected, genderAgeSelected, fields){
     if (genderAgeSelected && fields.length != 1) {
         showModal(
             'Field combination not allowed',
-            'The field: <code>Insights video view time by gender age</code> cannot be combined with other fields'
+            'The field: <code>Insights video view time by gender age v2</code> cannot be combined with other fields'
         )
         return false
     }
