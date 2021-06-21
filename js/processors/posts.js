@@ -6,6 +6,9 @@ function preparePostsParams(sbksData, network, params) {
     if (params.fields.includes('gender_age')) {
         params.fields.splice(params.fields.indexOf('gender_age'), 1)
     }
+    params.fields = params.fields.map(
+        (field)=> field.startsWith('insights_video_view_time_by_gender_age') ? "insights_video_view_time_by_gender_age" : field
+    )
     if (sbksData.posts_networks[network].sort) {
         params.sort = params.sort || []
         for (const field of sbksData.posts_networks[network].sort) {
@@ -41,8 +44,10 @@ function preparePostsParams(sbksData, network, params) {
 function processPost(post) {
     let row = {}
     for (let [field, value] of Object.entries(post)) {
+        if (field === 'insights_video_view_time_by_gender_age') {
+            field = 'insights_video_view_time_by_gender_age_v1'
+        }
         let fieldObj = POSTS_FIELDS[field]
-
         if (!fieldObj) {
             console.log(`Unknown field in the response: ${field}`)
             continue
@@ -62,7 +67,7 @@ function processPost(post) {
 
                 for (const subField of Object.keys(fieldObj.subfields)) {
                     let formattedSubField = subField
-                        .replace(/./g, '_')
+                        .replace(/\./g, '_')
                         .replace(/-/g, '_')
                     row[`${field}_${formattedSubField}_${parseInt(i, 10) + 1}`] = item[subField]
                 }
@@ -70,7 +75,7 @@ function processPost(post) {
         } else if (fieldObj.subfields && value) {
             for (const subField of Object.keys(value)) {
                 let formattedSubField = subField
-                    .replace(/./g, '_')
+                    .replace(/\./g, '_')
                     .replace(/-/g, '_')
                 row[`${field}_${formattedSubField}`] = value[subField]
             }
@@ -135,7 +140,7 @@ async function getPostsData(sbksData) {
         for ([key, value] of Object.entries(fakeDimData)) {
             data = {}
             data[typeOfFakeDim] = key
-            data[`insights_video_view_time_by_${typeOfFakeDim}`] = value
+            data[`insights_video_view_time_by_${typeOfFakeDim === 'gender_age' ? 'gender_age_v2' : typeOfFakeDim}`] = value
             rows.push(data)
         }
     }

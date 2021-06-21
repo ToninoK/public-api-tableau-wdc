@@ -552,10 +552,37 @@ let POSTS_FIELDS = {
         networks: ['facebook'],
         type: tableau.dataTypeEnum.string
     },
-    insights_video_view_time_by_gender_age: {
+    insights_video_view_time_by_gender_age_v2: {
         networks: ['facebook'],
         type: tableau.dataTypeEnum.int
     },
+    insights_video_view_time_by_gender_age_v1: {
+        networks: ['facebook'],
+        subfields: {
+            "U_55_64": tableau.dataTypeEnum.int,
+            "M_55_64": tableau.dataTypeEnum.int,
+            "U_35_44": tableau.dataTypeEnum.int,
+            "F_45_54": tableau.dataTypeEnum.int,
+            "M_35_44": tableau.dataTypeEnum.int,
+            "M_18_24": tableau.dataTypeEnum.int,
+            "F_25_34": tableau.dataTypeEnum.int,
+            "U_65": tableau.dataTypeEnum.int,
+            "M_25_34": tableau.dataTypeEnum.int,
+            "U_18_24": tableau.dataTypeEnum.int,
+            "F_65": tableau.dataTypeEnum.int,
+            "U_45_54": tableau.dataTypeEnum.int,
+            "F_13_17": tableau.dataTypeEnum.int,
+            "F_55_64": tableau.dataTypeEnum.int,
+            "M_65": tableau.dataTypeEnum.int,
+            "F_35_44": tableau.dataTypeEnum.int,
+            "M_13_17": tableau.dataTypeEnum.int,
+            "U_13_17": tableau.dataTypeEnum.int,
+            "U_25_34": tableau.dataTypeEnum.int,
+            "M_45_54": tableau.dataTypeEnum.int,
+            "F_18_24": tableau.dataTypeEnum.int,
+        }
+    },
+
     insights_video_views: {networks: ['facebook', 'instagram'], type: tableau.dataTypeEnum.int},
     insights_video_views_10s: {networks: ['facebook'], type: tableau.dataTypeEnum.int},
     insights_video_views_10s_by_play_type: {
