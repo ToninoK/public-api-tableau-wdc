@@ -128,7 +128,7 @@ async function getPostsData(sbksData) {
         }
 
         for (const post of apiResponse.data.posts) {
-            if (post.hasOwnProperty('insights_video_view_time_by_country') || post.hasOwnProperty('insights_video_view_time_by_gender_age')){
+            if (post.hasOwnProperty('insights_video_view_time_by_country') || sbksData.gender_age_version === 2){
                 typeOfFakeDim = post.hasOwnProperty('insights_video_view_time_by_country') ? 'country' : 'gender_age'
                 processFakeDimResponse(post, fakeDimData)
                 continue

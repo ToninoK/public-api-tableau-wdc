@@ -33,7 +33,8 @@ let SBKS = {
     aggregated_post_metrics: [],
     aggregated_post_dimensions: [],
     posts_filters: {},
-    posts_networks: {}
+    posts_networks: {},
+    gender_age_version: 1,
 }
 
 // PROFILES
