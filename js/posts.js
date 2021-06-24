@@ -47,6 +47,7 @@ async function onPostsSubmit(e) {
                 }
                 if (item.value === 'insights_video_view_time_by_gender_age_v2'){
                     gender_age_metric_selected = true
+                    SBKS.gender_age_version = 2
                 }
                 item.name = item.name.replace(`${network}-`, '')
                 posts_networks[network] = processFormField(posts_networks[network], item)
