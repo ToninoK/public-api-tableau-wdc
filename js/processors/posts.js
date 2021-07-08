@@ -55,9 +55,12 @@ function processPost(post) {
 
         if (fieldObj.type) {
             row[field] = value
+            if (field === 'created_time') {
+                row[field] = value.slice(0, -6)
+            }
         } else if (fieldObj.array && fieldObj.subfields && Array.isArray(value)) {
             if (field === 'attachments' && value['type'] === 'album') {
-                value = value['attachements'] || []
+                value = value['attachments'] || []
             }
 
             for (const [i, item] of Object.entries(value)) {
