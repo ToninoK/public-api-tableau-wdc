@@ -79,13 +79,23 @@ async function onLoginSubmit(e) {
     tableau.username = $('#token').val()
     tableau.password = $('#secret').val()
 
+    let today = moment()
+    let monthAgo = today.subtract(30, 'days')
+
     let result = await fetchProfilesAndLabels()
-    if (result == -1){
+    if (result === -1){
         $loginSpinner.hide()
         return
     }
+    await setAdAccounts(monthAgo.format('YYYY-MM-DD'), today.format('YYYY-MM-DD'), false)
+    await setCampaigns(monthAgo.format('YYYY-MM-DD'), today.format('YYYY-MM-DD'))
+
     $login.hide()
-    renderProfiles()
+    if (SBKS.data_source === 'facebook_ads') {
+        renderAdAccounts()
+    } else {
+        renderProfiles()
+    }
 }
 
 function showModal(title, body) {
@@ -108,6 +118,12 @@ $(function () {
     $('#profileMetrics .back,#aggregatedPostMetrics .back, #posts .back').click(function () {
         $('[id$=Spinner]').hide()
         $('#profileMetrics, #aggregatedPostMetrics, #posts').hide()
+        $('#profiles').show()
+    })
+
+    $('#facebook_ads .back').click(function () {
+        $('[id$=Spinner]').hide()
+        $('#facebook_ads').hide()
         $('#profiles').show()
     })
 })

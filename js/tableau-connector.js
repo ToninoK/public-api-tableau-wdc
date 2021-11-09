@@ -1,4 +1,6 @@
 const MAX_PROFILES = 100
+const MAX_AD_ACCOUNTS = 500
+const MAX_AD_CAMPAIGNS = 500
 const MAX_METRICS = 25
 const MAX_DAYS = 360
 const MAX_POSTS_ARRAY_DEPTH = 10
@@ -52,6 +54,13 @@ tableauConnector.getSchema = schemaCallback => {
                 }
             }
         }
+    } else if (sbksData.data_source === 'facebook_ads') {
+        for (const metric of sbksData.fb_ads.conf.fields) {
+            appendMetricColumn(metric, cols)
+        }
+        for (const dimension of sbksData.fb_ads.conf.dimensions) {
+            appendDimensionColumn(dimension, cols)
+        }
     }
 
     if (cols.length) {
@@ -69,6 +78,8 @@ tableauConnector.getData = async (table, doneCallback) => {
         table.appendRows(await getAggregatedPostData(sbksData))
     } else if (sbksData.data_source === 'posts') {
         table.appendRows(await getPostsData(sbksData))
+    } else if (sbksData.data_source === 'facebook_ads') {
+        table.appendRows(await getFbAdsData(sbksData))
     }
 
     doneCallback()
@@ -83,6 +94,8 @@ function invokeConnector(dataSource) {
         tableau.connectionName = 'Socialbakers social media aggregated post metrics'
     } else if (dataSource === 'posts') {
         tableau.connectionName = 'Socialbakers social media posts'
+    } else if (dataSource === 'facebook_ads') {
+        tableau.connectionName = 'Socialbakers social media facebook ads'
     }
 
     tableau.submit()

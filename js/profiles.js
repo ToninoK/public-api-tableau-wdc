@@ -1,6 +1,7 @@
 let $profiles = $('#profiles')
 let $profilesSpinner = $('#profilesSpinner').hide()
 let $profilesTable = $('#profilesTable')
+let $adaccountsSpinner = $('#adaccountsSpinner')
 
 async function onProfilesSubmit(e) {
     e.preventDefault()
@@ -45,8 +46,20 @@ async function onProfilesSubmit(e) {
         renderAggregatedPostMetrics()
     } else if (SBKS.data_source === 'posts') {
         renderPosts()
+    } else if (SBKS.data_source === 'facebook_ads') {
+        renderFacebookAds() 
     }
 }
+
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+
+$(function() {
+    $('#daterangeAccounts').daterangepicker({
+        opens: 'right'
+    }, prepareFacebookAds);
+});
 
 $(function () {
     $profiles.submit(onProfilesSubmit)
@@ -55,7 +68,14 @@ $(function () {
         e.preventDefault()
         SBKS.data_source = $(this).data('source-type')
         $('#data_source').text($(this).text())
-        renderProfiles()
+        if(SBKS.data_source === 'facebook_ads') {
+            $('#adAccountRange').css('visibility', 'visible')
+            renderAdAccounts()
+        }
+        else {
+            $('#adAccountRange').css('visibility', 'hidden')
+            renderProfiles()
+        }
         $('#search').keyup()
     })
 
@@ -69,6 +89,11 @@ $(function () {
     $(document).on('change', 'input[type=checkbox][name$=_profile]', function () {
         $('#profiles button[type=submit]')
             .prop('disabled', !$('input[type=checkbox][name$=_profile]:checked').length)
+    })
+
+    $(document).on('change', 'input[type=checkbox][name$=_ad_account]', function () {
+        $('#profiles button[type=submit]')
+            .prop('disabled', !$('input[type=checkbox][name$=_ad_account]:checked').length)
     })
 
     $(document).on('click', '#profiles tbody tr', function (e) {
@@ -129,6 +154,92 @@ function filterProfiles(search) {
     }
 }
 
+
+async function prepareFacebookAds(start, end, label) {
+    let dateRange = parseDateRange(`${start.format('MM/DD/YYYY')} - ${end.format('MM/DD/YYYY')}`)
+    let adjustedDateRange = adjustDateRange(dateRange)
+    await setAdAccounts(adjustedDateRange.start, adjustedDateRange.end, true)
+    await setCampaigns(adjustedDateRange.start, adjustedDateRange.end)
+}
+
+async function setAdAccounts(start, end, render) {
+    $adaccountsSpinner.show()
+    let response = await callSbksApi(
+        '3/ads/accounts',
+        'POST',
+        {
+            date_start: start,
+            date_end: end,
+        }
+    )
+
+    SBKS.adaccounts = response.success ? response.ad_accounts : []
+    if (render) {
+        renderAdAccounts()
+    }
+    $adaccountsSpinner.hide()
+}
+
+async function setCampaigns(start, end) {
+    let response = await callSbksApi(
+        '3/facebook/ads/metrics',
+        'POST',
+        {
+            'ad_accounts': SBKS.adaccounts.map((item) => item.id),
+            'date_start': start,
+            'date_end': end,
+            'metrics': [{'metric': 'clicks'}],
+            'dimensions': [
+                {
+                    'type': 'campaign',
+                    'fields': [
+                        'campaign_name',
+                    ],
+                    'group': {
+                        'limit': 2000,
+                    },
+                },
+            ]
+        },
+    )
+
+	const campaignsFormatted = []
+    if (response.success) {
+		const campaigns = response.header[0]
+		for (let i = 0; i < campaigns.fields.length; i++) {
+			campaignsFormatted.push({
+				id: campaigns.rows[i],
+				name: campaigns.fields[i].campaign_name,
+			})
+		}
+    }
+    SBKS.campaigns = campaignsFormatted
+}
+
+function renderAdAccounts() {
+    $profilesTable.html('')
+    $profilesTable.append($(`
+            <thead data-network="facebook">
+                <tr>
+                    <th style="width: 30px" title="Select all">
+                        <input class="form-check-input" type="checkbox" data-select-multiple="facebook_adaccount" />
+                    </th>
+                    <th>
+                        <ion-icon style="vertical-align: sub;font-size: 22px;"
+                            title="facebook" name="${SBKS.icons["facebook"]}"></ion-icon> Facebook
+                    </th>
+                    <th>ID</th>
+                </tr>
+            </thead>`)
+    )
+    let $tbody = $(`<tbody data-network="facebook">`)
+    for (const account of SBKS.adaccounts) {
+        renderAdAccount(account, $tbody)
+    }
+    $profilesTable.append($tbody)
+    $profiles.show()
+}
+
 function renderProfiles() {
     $profilesTable.html('')
 
@@ -172,6 +283,16 @@ function renderProfile(network, profile, $tbody) {
                    <input class="form-check-input" style="display: ${profile.insights_enabled ? 'block' : 'none'}" 
                           type="checkbox" name="${network}_insights" value="${profile.id}">
                </td>
+           </tr>`)
+    )
+}
+
+function renderAdAccount(account, $tbody) {
+    $tbody.append(
+        $(`<tr data-profile-id="${account.id}" data-hidden="0">
+               <td><input class="form-check-input" type="checkbox" name="facebook_ad_account" value="${account.id}"></td>
+               <td>${account.name}</td>
+               <td>${account.id}</td>
            </tr>`)
     )
 }

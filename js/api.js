@@ -38,6 +38,11 @@ async function doApiCall(path, sbksData, params) {
                     let label = sbksData.post_labels.find(l => l.id === label_id)
                     return label ? label.name : label_id
                 })
+            } else if (header.type === 'campaign') {
+                response['header'][index]['rows'] = header.rows.map(campaign_id => {
+                    let campaign = sbksData.campaigns.find(c => c.id === campaign_id)
+                    return campaign ? campaign.name : campaign
+                })
             }
         }
     }

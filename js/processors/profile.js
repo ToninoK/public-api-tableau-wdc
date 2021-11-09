@@ -19,6 +19,18 @@ function appendDimensionColumn(name, cols, sbksData) {
             cols = appendColumn(cols, 'platform', tableau.dataTypeEnum.string)
         }
         return cols
+    } else if (name === 'ad_account') {
+        cols = appendColumn(cols, 'ad_account_id', tableau.dataTypeEnum.string)
+        cols = appendColumn(cols, 'ad_account', tableau.dataTypeEnum.string)
+
+        return cols
+    } else if (name === 'campaign') {
+        cols = appendColumn(cols, 'campaign_id', tableau.dataTypeEnum.string)
+        cols = appendColumn(cols, 'campaign', tableau.dataTypeEnum.string)
+        cols = appendColumn(cols, 'ad_account', tableau.dataTypeEnum.string)
+        cols = appendColumn(cols, 'ad_account_id', tableau.dataTypeEnum.string)
+
+        return cols
     }
 
     return appendColumn(
