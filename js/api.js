@@ -39,9 +39,18 @@ async function doApiCall(path, sbksData, params) {
                     return label ? label.name : label_id
                 })
             } else if (header.type === 'campaign') {
+                for (let [i, camp] of Object.entries(header.fields)) {
+                    if (camp.campaign_name in sbksData.campaigns) {
+                        continue
+                    }
+                    sbksData.campaigns.push({
+                        name: camp.campaign_name,
+                        id: header.rows[i],
+                    })
+                }
                 response['header'][index]['rows'] = header.rows.map(campaign_id => {
-                    let campaign = sbksData.campaigns.find(c => c.id === campaign_id)
-                    return campaign ? campaign.name : campaign
+                    let ind = header.rows.indexOf(campaign_id)
+                    return header.fields[ind].campaign_name
                 })
             }
         }

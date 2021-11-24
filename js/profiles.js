@@ -8,12 +8,19 @@ async function onProfilesSubmit(e) {
     $profilesSpinner.show()
     let selectedProfiles = $profiles.serializeArray()
     for (const selected of selectedProfiles) {
+        if (selected.name === 'daterange') {
+            continue
+        }
         let parts = selected.name.split('_')
         let network = parts[0]
 
         if (parts[1] === 'profile') {
             SBKS.profiles_selected[network] = SBKS.profiles_selected[network] || {}
             SBKS.profiles_selected[network][selected.value] = false
+        }
+        if (parts[1] === 'adaccount') {
+            SBKS.profiles_selected['facebook_ads'] = SBKS.profiles_selected['facebook_ads'] || []
+            SBKS.profiles_selected['facebook_ads'].push(selected.value)
         }
     }
 
@@ -91,9 +98,9 @@ $(function () {
             .prop('disabled', !$('input[type=checkbox][name$=_profile]:checked').length)
     })
 
-    $(document).on('change', 'input[type=checkbox][name$=_ad_account]', function () {
+    $(document).on('change', 'input[type=checkbox][name$=_adaccount]', function () {
         $('#profiles button[type=submit]')
-            .prop('disabled', !$('input[type=checkbox][name$=_ad_account]:checked').length)
+            .prop('disabled', !$('input[type=checkbox][name$=_adaccount]:checked').length)
     })
 
     $(document).on('click', '#profiles tbody tr', function (e) {
@@ -290,7 +297,7 @@ function renderProfile(network, profile, $tbody) {
 function renderAdAccount(account, $tbody) {
     $tbody.append(
         $(`<tr data-profile-id="${account.id}" data-hidden="0">
-               <td><input class="form-check-input" type="checkbox" name="facebook_ad_account" value="${account.id}"></td>
+               <td><input class="form-check-input" type="checkbox" name="facebook_adaccount" value="${account.id}"></td>
                <td>${account.name}</td>
                <td>${account.id}</td>
            </tr>`)

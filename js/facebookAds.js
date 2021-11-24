@@ -180,7 +180,7 @@ function renderFacebookAdsFiltersSorts() {
 
     let sorts = `<div class="input-group mb-3">
         <label class="input-group-text">Sort</label>
-        <select class="form-select" name="sort[]" id="sort_facebook_ads"></select>
+        <select class="form-select" name="sort" id="sort_facebook_ads"></select>
     </div>
     <div class="row">
         <div class="col">

@@ -1,6 +1,12 @@
 async function getFbAdsData(sbksData) {
     let dateRange = adjustDateRange(sbksData.date_range)
-    const payloads = getFacebookAdsPayloads(dateRange, sbksData.adaccounts, sbksData.campaigns, sbksData.fb_ads)
+    const selectedCampaigns = 'campaigns' in sbksData.fb_ads.filters ? sbksData.fb_ads.filters.campaigns : []
+    const payloads = getFacebookAdsPayloads(
+        dateRange,
+        sbksData.profiles_selected.facebook_ads,
+        selectedCampaigns,
+        sbksData.fb_ads,
+    )
     const requests = []
     for (const payload of payloads) {
         requests.push(doApiCall(sbksData.fb_ads_url, sbksData, payload))
@@ -57,7 +63,7 @@ function mergeHeaderFb(a, b, match) {
                     for (const row of bHeader.rows) {
                         if (["ad_account", "campaign"].includes(match[0]) && !a.header[i].rows.find(x => x === row))
                             a.header[i].rows.push(row)
-                        else if (match[0] !== "ad_account" && match[0] !== "campaigns")
+                        else if (match[0] !== "ad_account" && match[0] !== "campaign")
                             a.header[i].rows.push(row)
                     }
                 }
@@ -122,15 +128,15 @@ function processMetricFbAd(sbksData, data, item, depth, index, row, rows) {
 
 
 function getFacebookAdsPayloads (dateRange, adAccounts, adCampaigns, fbAdsConfig) {
-    const adAccountChunks = chunkArray(adAccounts.map((acc) => acc.id), MAX_AD_ACCOUNTS)
-    const adCampaignChunks = chunkArray(adCampaigns.map((acc) => acc.id), MAX_AD_CAMPAIGNS)
+    const adAccountChunks = chunkArray(adAccounts, MAX_AD_ACCOUNTS)
+    const adCampaignChunks = chunkArray(adCampaigns, MAX_AD_CAMPAIGNS)
     const rangeChunks = splitDateRange(dateRange.start, dateRange.end, MAX_DAYS)
 
     const filters = buildFacebookFilters(fbAdsConfig.filters)
     const metrics = fbAdsConfig.conf.fields.map((field) => {return {metric: field}})
     const metricsIndexes = {}
-    for (const [index, metric] of Object.entries(metrics)) {
-        metricsIndexes[metric] = index
+    for (const [index, obj] of Object.entries(metrics)) {
+        metricsIndexes[obj.metric] = index
     }
     const dimensions = buildFacebookDimensions(
         fbAdsConfig.conf["dimensions"],
@@ -141,20 +147,22 @@ function getFacebookAdsPayloads (dateRange, adAccounts, adCampaigns, fbAdsConfig
     const payloads = []
     for (const [start, end] of Object.entries(rangeChunks)) {
         for (const accounts_chunk of adAccountChunks) {
+            const payload = {
+                'date_start': start,
+                'date_end': end,
+                'ad_accounts': accounts_chunk,
+                'metrics': metrics,
+                'dimensions': dimensions,
+            }
+            if (filters.length !== 0) {
+                payload['filter'] = filters
+            }
+            if (adCampaignChunks.length === 0) {
+                payloads.push(payload)
+                continue
+            }
             for (const campaigns_chunk of adCampaignChunks) {
-                const payload = {
-                    'date_start': start,
-                    'date_end': end,
-                    'ad_accounts': accounts_chunk,
-                    'metrics': metrics,
-                    'dimensions': dimensions,
-                }
-                if (filters.length !== 0) {
-                    payload['filter'] = filters
-                }
-                if (adCampaigns.length !== 0 && adCampaigns[0] !== '') {
-                    payload['ad_campaigns'] = campaigns_chunk
-                }
+                payload['ad_campaigns'] = campaigns_chunk
                 payloads.push(payload)
             }
         }
@@ -163,7 +171,7 @@ function getFacebookAdsPayloads (dateRange, adAccounts, adCampaigns, fbAdsConfig
 }
 
 function buildFacebookFilters(filters) {
-    return Object.keys(filters).map((filter) => {
+    return Object.keys(filters).filter(item => item !== 'campaigns').map((filter) => {
         return {
             field: filter,
             value: filters[filter],
@@ -194,13 +202,18 @@ function buildFacebookDimensions (dimensions, sorts, metricsIndexes) {
         group['limit'] = (
             dimension === 'campaign' ? sorts.campaign_limit : dimension === 'country' ? sorts.country_limit : 2000
         )
-        dimensionsApiFormat.push(
-            {
-                type: dimension,
-                group: group,
-                other: false,
-            }
-        )
+
+        let dimensionObj = {
+            type: dimension,
+            group: group,
+            other: false,
+        }
+
+        if (dimension === 'campaign') {
+            dimensionObj["fields"] = ['campaign_name']
+        }
+
+        dimensionsApiFormat.push(dimensionObj)
     }
     return dimensionsApiFormat
 }
